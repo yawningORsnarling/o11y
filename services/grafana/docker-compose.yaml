@@ -1,0 +1,60 @@
+
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    command: "--config /etc/grafana/custom.ini"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1",
+        ]
+    volumes:
+      - type: bind
+        source: ./provisioning/
+        target: /etc/grafana/provisioning/
+        read_only: true
+      - type: bind
+        source: ./provisioning/alerting/
+        target: /etc/grafana/provisioning/alerting/
+        read_only: true
+      - type: bind
+        source: ./provisioning/datasources/
+        target: /etc/grafana/provisioning/datasources/
+        read_only: true
+      - type: bind
+        source: ./provisioning/dashboards/
+        target: /etc/grafana/provisioning/dashboards/
+        read_only: true
+      - type: bind
+        source: ./grafana_custom.ini
+        target: /etc/grafana/custom.ini
+        read_only: true
+      - type: bind
+        source: ./shabbynet.png
+        target: /usr/share/grafana/public/img/grafana_icon.svg
+        read_only: true
+    ports:
+      - "3000:3000"
+    environment:
+      # Admin credentials (from Doppler or .env)
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      # Plugin installs
+      GF_PLUGINS_PREINSTALL: >
+        yesoreyeram-infinity-datasource,
+        volkovlabs-echarts-panel,
+        marcusolsson-dynamictext-panel,
+        volkovlabs-variable-panel,
+        marcusolsson-treemap-panel,
+        andrewbmchugh-flow-panel,
+        grafana-clickhouse-datasource,
+        esnet-matrix-panel,
+        grafana-polystat-panel,
+        jdbranham-diagram-panel
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"

@@ -1,0 +1,25 @@
+
+- job_name: victoria-metrics
+  scrape_interval: 1m
+  scrape_timeout: 20s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+    - targets:
+        - "victoria-metrics:8428"
+  relabel_configs:
+    - target_label: test
+      replacement: srp
+
+- job_name: grafana
+  scrape_interval: 1m
+  scrape_timeout: 20s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+    - targets:
+        - "grafana:3000"
+  relabel_configs:
+    - target_label: test
+      replacement: srp 
+
