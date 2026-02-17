@@ -82,7 +82,7 @@ def run() -> int:
     load_dotenv()
 
     p = argparse.ArgumentParser()
-    p.add_argument("--action", "-a", required=True, help="Doppler project name")
+    p.add_argument("--action", "-a", choices=["up", "down", "restart"], required=True, help="Doppler project name")
     p.add_argument("--project", "-p", required=True, help="Doppler project name")
     p.add_argument("--config", "-c", required=True, help="Doppler config name (dev/prod)")
     p.add_argument(
@@ -121,7 +121,6 @@ def run() -> int:
 
     # Pull secrets from Doppler
     doppler_secrets = fetch_doppler_secrets(token, args.project, args.config)
-    print(doppler_secrets)
 
     # Build env for docker compose:
     # start from current env, then overlay Doppler secrets
@@ -150,6 +149,19 @@ def run() -> int:
             compose_files=compose_files,
             env=child_env,
             remove_volumes=args.remove_volumes,
+        )
+    elif args.action == "restart":
+        run_compose_down(
+            workdir=workdir,
+            compose_files=compose_files,
+            env=child_env,
+            remove_volumes=args.remove_volumes,
+        )
+        run_compose_up(
+            workdir=workdir,
+            compose_files=compose_files,
+            env=child_env,
+            do_pull=(not args.no_pull),
         )
 
     print("docker compose up -d completed (with Doppler env injected at runtime).")

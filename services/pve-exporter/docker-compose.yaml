@@ -1,0 +1,28 @@
+
+services:
+  pve-exporter:
+    image: prompve/prometheus-pve-exporter:3.8.1
+    container_name: pve-exporter
+    restart: unless-stopped
+    command:
+      - "--config=/etc/pve.yaml"
+      - "--web.listen-address=:9221"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:9221/metrics || exit 1",
+        ]
+    ports:
+      - "9221:9221"
+    environment:
+      PVE_MODULE: default
+      PVE_VERIFY_SSL: false
+      PVE_USER: ${PVE_API_USER}
+      PVE_TOKEN_NAME: ${PVE_API_TOKEN_NAME}
+      PVE_TOKEN_VALUE: ${PVE_API_TOKEN_VALUE}
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"
+

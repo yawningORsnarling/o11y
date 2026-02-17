@@ -18,13 +18,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "uid": "victoria-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -38,7 +38,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -55,7 +54,6 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -71,7 +69,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -84,7 +82,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -97,42 +95,41 @@
           "showLegend": true
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.3",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P4169E866C3094E38"
+            "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(job)({job_origin=\"vmagent-scraper\"})",
+          "expr": "sum(rate(vm_promscrape_scraped_samples_sum[$__rate_interval])) by(job)",
+          "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "New panel",
+      "title": "Panel Title",
       "type": "timeseries"
     }
   ],
-  "preload": false,
-  "schemaVersion": 42,
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "jobs",
-  "uid": "adkwbz4",
-  "version": 2
+  "title": "o11y-home",
+  "uid": "bfdfke4w5fy80f",
+  "version": 1,
+  "weekStart": ""
 }

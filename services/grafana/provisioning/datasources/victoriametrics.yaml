@@ -2,8 +2,24 @@ apiVersion: 1
 
 datasources:
   - name: VictoriaMetrics
+    uid: victoria-metrics
     type: prometheus
     access: proxy
     url: http://victoria-metrics:8428
     isDefault: true
-    editable: false
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.51.2
+      cacheLevel: 'High'
+      disableRecordingRules: false
+      incrementalQueryOverlapWindow: 10m
+  
+  - name: Loki
+    uid: loki
+    type: loki
+    url: "http://loki:3001"
+    editable: true
+    access: "proxy"
+    orgId: 1
