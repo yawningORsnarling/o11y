@@ -1,0 +1,37 @@
+services:
+  vmagent-scraper:
+    image: victoriametrics/vmagent:v1.135.0
+    container_name: vmagent-scraper
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:8629/ready || exit 1",
+        ]
+    ports:
+      - "8629:8629"
+    volumes:
+      - type: bind
+        source: ./prometheus.yaml
+        target: /etc/prometheus/prometheus.yaml
+        read_only: false
+      - type: bind
+        source: ./scrapes
+        target: /etc/prometheus/scrapes
+        read_only: false
+      - vmagent_scraper_data:/vmagentdata
+    command:
+      - "--httpListenAddr=:8629"
+      - "--promscrape.config=/etc/prometheus/prometheus.yaml"
+      - "--promscrape.config.strictParse=false"
+      # remote writes
+      - "--remoteWrite.url=http://victoria-metrics:8428/api/v1/write"
+      - "--remoteWrite.label=job_origin=vmagent-scraper"
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"
+
+volumes:
+  vmagent_scraper_data:

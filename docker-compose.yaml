@@ -1,0 +1,11 @@
+
+include:
+  - "services/grafana/docker-compose.yaml"
+  - "services/victoria-metrics/docker-compose.yaml"
+  - "services/vmagent-scraper/docker-compose.yaml"
+  - "services/pve-exporter/docker-compose.yaml"
+
+networks:
+  o11y-home:
+    name: o11y-home
+    driver: bridge

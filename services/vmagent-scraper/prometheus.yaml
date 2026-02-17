@@ -1,0 +1,16 @@
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+storage:
+  tsdb:
+    out_of_order_time_window: 15m
+
+scrape_config_files:
+  - scrapes/*.yaml
+
+scrape_configs:
+  - job_name: "vmagent-scraper"
+    static_configs:
+      - targets: ["vmagent-scraper:8629"]

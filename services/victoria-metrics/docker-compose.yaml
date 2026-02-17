@@ -1,0 +1,34 @@
+
+services:
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:v1.127.0
+    container_name: victoria-metrics
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:8428/ready || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 10m
+    ports:
+      - "8428:8428"
+    volumes:
+      - victoria_metrics_data:/storage
+    command:
+      - "--storageDataPath=/storage"
+      - "--httpListenAddr=:8428"
+      - "--retentionPeriod=365d"
+      - "--maxLabelsPerTimeseries=45"
+      - "--search.maxQueryDuration=120s"
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"
+
+volumes:
+  victoria_metrics_data:
+
