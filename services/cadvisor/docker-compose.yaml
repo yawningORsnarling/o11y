@@ -1,0 +1,27 @@
+
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/:/rootfs"
+      - "/var/run:/var/run"
+      - "/sys:/sys"
+      - "/var/lib/docker/:/var/lib/docker"
+      - "/dev/disk/:/dev/disk"
+    command:
+      - "-v=1" # warning log level
+      - "--store_container_labels=false"
+      - "--whitelisted_container_labels=org.app,com.docker.compose.service,com.docker.compose.project,org.opencontainers.image.source,org.role,org.kind,org.team"
+      - "--disable_root_cgroup_stats=true"
+      - "--docker_only=true"
+    privileged: true
+    devices:
+      - "/dev/kmsg"
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"

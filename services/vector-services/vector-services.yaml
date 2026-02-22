@@ -1,0 +1,292 @@
+
+api:
+  enabled: true
+  address: "0.0.0.0:8686"
+
+sources:
+  o11y-internal-metrics:
+    type: internal_metrics
+  o11y-services-raw:
+    type: docker_logs
+
+transforms:
+#   o11y-transform:
+#     type: remap
+#     inputs:
+#       - o11y-services-raw
+#     source: |
+#       # Default label values needed for dashboards if parsing fails
+#       .level = "unknown"
+
+#       # Add metadata tags
+#       .tags = ["services", "network"]
+
+#       # Parse embedded labels
+#       .__parse_error = 0
+#       msg = encode_json(.)
+#       m, err = parse_json(msg, max_depth: 2)
+#       if err == null {
+#         .message = m.message
+#         .app = m.label."org.app"
+#         .kind = m.label."org.kind"
+#         .role = m.label."org.role"
+#         .team = m.label."org.team"
+#         .project = m.label."com.docker.compose.project"
+#         .project_repo = m.label."com.docker.compose.project.working_dir"
+
+#         # ----------------------------------------
+#         # Pull out embedded log level for each service
+#         # ----------------------------------------
+
+#         .container_name, _ = to_string(.container_name)
+#         if .container_name == "grid-mcp-1" || .container_name == "prometheus"  || .container_name == "alertmanager" || .container_name == "loki" || .container_name == "grafana" || .container_name == "alloy-agent" || .container_name == "blackbox" || .container_name == "pyroscope" || .container_name == "tempo" {
+#           m, err = parse_key_value(.message)
+#           if err == null && exists(m.level) {
+#             .level = m.level
+#           } else {
+#             m, err = parse_regex(.message, r'^(?P<level>\w+):')
+#             if err == null {
+#               .level = m.level
+#             }
+#           }
+#         } else if .container_name == "netevent-router" {
+#           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\s\|\s+(?P<level>\w+)\s')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if starts_with(.container_name, "echo-dt-") || starts_with(.container_name, "echo-echo-dt-") ||.container_name == "echo-pinginator" {
+#           m, err = parse_regex(.message, r'^(?P<level>\w+):')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if starts_with(.container_name, "telegraf") || starts_with(.container_name, "echo-telegraf") {
+#           m, err = parse_regex(.message, r'^.*\s(?P<level>[A-Z]!)')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "clickhouse" {
+#           m, err = parse_regex(.message, r'^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d{6}\s\[.*\]\s\{.*\}\s<(?P<level>\w+)>')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "consul" {
+#           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\s\[(?P<level>\w+)\]\s')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if starts_with(.container_name, "vector") || .container_name == "vmruler" || .container_name == "victoriametrics" {
+#           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+(?P<level>\w+)\s')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "vm-local" || .container_name == "vmagent" || .container_name == "vmagent-with-telecaster" {
+#           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\t+(?P<level>\w+)\t+')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "echo-seeder-feed" {
+#           m, err = parse_regex(.message, r'^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\]\s(?P<level>\w+)\s')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "echo-infoinator" {
+#           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2},\d{3}\s+(?P<level>\w+)\s')
+#           if err == null {
+#             .level = m.level
+#           } else {
+#             m, err = parse_regex(.message, r'^\s+(?P<level>\w+)\s')
+#             if err == null {
+#               .level = m.level
+#             }
+#           }
+#         } else if .container_name == "cadvisor" {
+#           m, err = parse_regex(.message, r'^(?P<level>[A-Z])\d')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "nats-server" {
+#           m, err = parse_regex(.message, r'^\[\d+\]\s\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6}\s\[(?P<level>\w+)\]')
+#           if err == null {
+#             .level = m.level
+#           }
+#         } else if .container_name == "prometheus-nats-exporter" {
+#           m, .err = parse_regex(.message, r'^\[\d+\]\s\d{4}/\d{2}/\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6}\s\[(?P<level>\w+)\]')
+#           if err == null {
+#             .level = m.level
+#           }
+#         }
+
+#         # ----------------------------------------
+#         # Convert log levels
+#         # ----------------------------------------
+
+#         levels = {
+#           "0": "emergency",
+#           "1": "emergency",
+#           "emerg": "emergency",
+#           "emg": "emergency",
+#           "emergency": "emergency",
+#           "p": "emergency",
+#           "alt": "emergency",
+#           "alert": "emergency",
+#           "alerting": "emergency",
+#           "fatal": "emergency",
+#           "f": "emergency",
+#           "2": "critical",
+#           "crt": "critical",
+#           "crit": "critical",
+#           "critical": "critical",
+#           "3": "error",
+#           "err": "error",
+#           "error": "error",
+#           "e!": "error",
+#           "e": "error",
+#           "4": "warning",
+#           "wrn": "warning",
+#           "warn": "warning",
+#           "warning": "warning",
+#           "w!": "warning",
+#           "#": "warning",
+#           "w": "warning",
+#           "5": "notice",
+#           "not": "notice",
+#           "notice": "notice",
+#           "*": "notice",
+#           "6": "info",
+#           "i!": "info",
+#           "inf": "info",
+#           "info": "info",
+#           "inform": "info",
+#           "information": "info",
+#           "informational": "info",
+#           "-": "info",
+#           "i": "info",
+#           "inf": "info",
+#           "7": "debug",
+#           "debug": "debug",
+#           "debugging": "debug",
+#           "d!": "debug",
+#           ".": "debug",
+#           "d": "debug",
+#           "dbg": "debug",
+#           "trace": "trace",
+#           "t": "trace",
+#           "trc": "trace"
+#         }
+
+#         # Attempt to replace level with mapping above
+#         level_lower, _ = downcase(.level)
+#         if level_lower != null {
+#           level, _ = get(levels, [level_lower])
+#           if level != null {
+#             .level = level
+#           } else {
+#             .level = "unknown"
+#           }
+#         }
+
+#         # ----------------------------------------
+#         # Drop rules
+#         # ----------------------------------------
+
+#         # Drop all info and debug logs
+#         if .level == "info" || .level == "debug" {
+#           if .container_name != "echo-infoinator" && .container_name != "vmagent-with-telecaster" {
+#             abort
+#           }
+#         }
+#       } else {
+#         .__parse_error = 1
+#       }
+
+#       # Drop logs with no message
+#       if .message == "" {
+#         abort
+#       }
+
+#       # ----------------------------------------
+#       # Assign labels and structured metadata
+#       # ----------------------------------------
+
+#       .labels = {}
+#       .labels.zone = "None"
+#       .labels.region = "None"
+#       .labels.super_region = "US-CENTRAL"
+#       .labels.geo = "US"
+#       .labels.locode = "US-DAL02"
+#       .labels.cluster = "US-DAL02-network"
+#       .labels.org_id = "network-services"
+#       .labels.team = "network-development"
+#       .labels.level = .level
+#       .structured_metadata = {}
+#       .structured_metadata.service = "vector-services"
+#       .structured_metadata.pipeline = "vector-services"
+#       .structured_metadata.__parse_error = .__parse_error
+#       .structured_metadata.source_type = .source_type
+#       .structured_metadata.hostname = .host
+#       .structured_metadata.tags = .tags
+
+#       # Assign Docker services labels and structured metadata
+#       if .__parse_error == 0 {
+#         .labels.image_name = .image
+#         .labels.container_name = .container_name
+#         .structured_metadata.app = .app
+#         .structured_metadata.kind = .kind
+#         .structured_metadata.role = .role
+#         .structured_metadata.org_team = .team
+#         .structured_metadata.project = .project
+#         .structured_metadata.project_repo = .project_repo
+#         .structured_metadata.container_id = .container_id
+#         .structured_metadata.container_created = .container_created_at
+#       }
+
+#       # Delete unneeded root-level fields
+#       del(.subject)
+#       del(.host)
+#       del(.source_type)
+#       del(.level)
+#       del(.tags)
+#       del(.__parse_error)
+#       del(.image)
+#       del(.app)
+#       del(.kind)
+#       del(.role)
+#       del(.team)
+#       del(.label)
+#       del(.project)
+#       del(.project_repo)
+#       del(.container_id)
+#       del(.container_name)
+#       del(.container_created_at)
+#       del(.stream)
+
+  o11y-internal-metrics-transform:
+    type: remap
+    inputs:
+      - o11y-internal-metrics
+    source: |
+      .tags.stack = "o11y-home"
+
+sinks:
+  o11y-services-loki-local:
+    type: loki
+    inputs:
+      - o11y-services-raw
+      # - o11y-transform
+    endpoint: "http://loki:3001"
+    compression: snappy
+    encoding:
+      codec: "json"
+    remove_label_fields: true
+    remove_structured_metadata_fields: true
+
+    labels:
+      "*": "{{ labels }}"
+    structured_metadata:
+      "*": "{{ structured_metadata }}"
+
+  o11y-vmagent-proxy-remote-write:
+    type: prometheus_remote_write
+    inputs:
+      - o11y-internal-metrics-transform
+    endpoint: "http://victoria-metrics:8428/api/v1/write"

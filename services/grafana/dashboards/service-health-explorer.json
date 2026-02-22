@@ -1,0 +1,4624 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 41,
+      "panels": [],
+      "title": "ECHO Service Health Summary",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${metrics_datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 39,
+      "options": {
+        "afterRender": "",
+        "content": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.75rem\">\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Service</td>\n      <td>{{data.0.hostname}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Image</td>\n      <td>{{data.0.image}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Image Source</td>\n      <td>{{data.0.container_label_org_opencontainers_image_source}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">App/Stack</td>\n      <td>{{data.0.container_label_org_app}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Role</td>\n      <td>{{data.0.container_label_org_role}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Kind</td>\n      <td>{{data.0.container_label_org_kind}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Team</td>\n      <td>{{data.0.container_label_org_team}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Server</td>\n      <td>{{data.0.server}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Health</td>\n      <td style=\"color: {{#if (eq data.0.health_check '0')}}#4CAF50{{else}}#F44336{{/if}}\">\n        {{#if (eq data.0.health_check '0')}}Healthy{{else}}Unhealthy{{/if}}\n      </td>\n    </tr>\n  </tbody>\n</table>",
+        "contentPartials": [],
+        "defaultContent": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.75rem\">\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Service</td>\n      <td style=\"min-width: 200px;\">{{variable \"container_name\"}}</td>\n    </tr>\n  </tbody>\n</table>\n\n<br>\n\n<span style=\"color: #f5aa42; font-family: 'Roboto Mono', monospace; font-size: 0.75rem\">\nHealth check unavailable for current service.\n</span>",
+        "editor": {
+          "format": "auto",
+          "language": "html"
+        },
+        "editors": [
+          "default"
+        ],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "allRows",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "container_last_seen{cluster=~\".+-network\", container_label_com_docker_compose_service=\"$service\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "container_info"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "echo_health_result_code{cluster=~\".+-network\", hostname=\"$service\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "health_check"
+        }
+      ],
+      "title": "",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #health_check": "health_check",
+              "Value #log_count": "",
+              "Value #log_rate": "",
+              "Value #service_count": "",
+              "cluster 1": "network_cluster"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${metrics_datasource}"
+      },
+      "description": "Services health and operational information. The links take you to a more detailed service dashboard, and the status codes are as follows:\n\n- **OK:** Request succeeded (even with HTTP errors).\n- **RSM:** Body mismatch with `response_string_match`.\n- **BRE:** Failed to read body, invalid UTF-8, or oversized response.\n- **CNF:** General network connection failure.\n- **TO:** Request timed out.\n- **DNS:** DNS resolution error.\n- **SCM:** Status code mismatch with expected value.\n\nPolling interval by default is 10s. [Learn more in the Telegraf HTTP Response Input Plugin](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/http_response)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Health"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "light-green",
+                        "index": 0,
+                        "text": "OK"
+                      },
+                      "1": {
+                        "color": "light-yellow",
+                        "index": 1,
+                        "text": "RSM"
+                      },
+                      "2": {
+                        "color": "light-orange",
+                        "index": 2,
+                        "text": "BRE"
+                      },
+                      "3": {
+                        "color": "light-red",
+                        "index": 3,
+                        "text": "CNF"
+                      },
+                      "4": {
+                        "color": "light-red",
+                        "index": 4,
+                        "text": "TO"
+                      },
+                      "5": {
+                        "color": "light-red",
+                        "index": 5,
+                        "text": "DNS"
+                      },
+                      "6": {
+                        "color": "light-yellow",
+                        "index": 6,
+                        "text": "SCM"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "color": "light-purple",
+                        "index": 7,
+                        "text": "NO DATA"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 43,
+      "interval": "15m",
+      "options": {
+        "cellHeight": "lg",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": false,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Uptime"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (cluster, hostname, server) (echo_health_result_code{cluster=~\"$cluster\", hostname!=\"\", hostname=\"$service\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "echo-{{hostname}}",
+          "range": false,
+          "refId": "health"
+        }
+      ],
+      "title": "Current Health",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "cluster": true,
+              "hostname": true,
+              "server": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Health"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${metrics_datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "axisWidth": 1,
+            "fillOpacity": 99,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                },
+                "1": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "RSM"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "BRE"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "CNF"
+                },
+                "4": {
+                  "color": "red",
+                  "index": 4,
+                  "text": "TO"
+                },
+                "5": {
+                  "color": "red",
+                  "index": 5,
+                  "text": "DNS"
+                },
+                "6": {
+                  "color": "yellow",
+                  "index": 6,
+                  "text": "SCM"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "color": "text",
+                  "index": 7,
+                  "text": "NO DATA"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nats-server"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 42,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by(cluster, name) (echo_server_service_running_container_sum{cluster=\"$cluster\", health=\"healthy\", name=\"$service\"})",
+          "legendFormat": "{{hostname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "State Timeline",
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${metrics_datasource}"
+      },
+      "description": "Determined by _consul_ uptime.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "instance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 268
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      },
+      "id": 44,
+      "interval": "15m",
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "label_replace(\n    sum by(instance) (\n        (time() - container_start_time_seconds{cluster=\"$cluster\", hostname=\"$service\"})\n    ),\n    \"instance\",\n    \"$1\",\n    \"instance\",\n    \"(.+):.+\"\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{instance}}",
+          "range": false,
+          "refId": "Uptime (Hrs)"
+        }
+      ],
+      "title": "ECHO Stack Uptime",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "cluster": true,
+              "hostname": true,
+              "name": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Uptime",
+              "instance": "ECHO Stack"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 35,
+      "panels": [],
+      "title": "Logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${logs_datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "log_rate"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 10
+      },
+      "id": 40,
+      "options": {
+        "afterRender": "",
+        "content": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.75rem\">\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Log Count</td>\n      <td>{{log_count}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Log Rate (log/s)</td>\n      <td>{{log_rate}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Service Logs</td>\n      <td>\n        <a style=\"color: #6e9fff\" ;\n          href=\"https://grafana.int.coreweave.com/d/ee2kn1qtyfldse/services-log-explorer?orgId=1&var-cluster={{ variable \"cluster\" }}&var-container_name={{ variable \"service\" }}\">\n          Dashboard\n        </a>\n      </td>\n    </tr>\n  </tbody>\n</table>",
+        "contentPartials": [],
+        "defaultContent": "No data",
+        "editor": {
+          "format": "auto",
+          "language": "html"
+        },
+        "editors": [
+          "default"
+        ],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logs_datasource}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum(rate({org_id=\"network-services\", team=\"network-development\", container_name=~\"$service\", level=~\"$level_filter\", cluster=~\"$cluster\"} |~ `.*$search_message.*` [$__auto]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "log_rate"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logs_datasource}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum(count_over_time({org_id=\"network-services\", team=\"network-development\", container_name=~\"$service\", level=~\"$level_filter\", cluster=~\"$cluster\"} |~ `.*$search_message.*` [$__auto]))",
+          "hide": false,
+          "queryType": "instant",
+          "refId": "log_count"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logs_datasource}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "count(sum(count_over_time({org_id=\"network-services\", team=\"network-development\", container_name=~\"$service\", level=~\"$level_filter\", cluster=~\"$cluster\"} |~ `.*$search_message.*` [$__auto])) by(container_name))",
+          "hide": false,
+          "queryType": "instant",
+          "refId": "service_count"
+        }
+      ],
+      "title": "",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #log_count": "log_count",
+              "Value #log_rate": "log_rate",
+              "Value #service_count": "service_count"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${logs_datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 20,
+        "x": 4,
+        "y": 10
+      },
+      "id": 36,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logs_datasource}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{org_id=\"network-services\", team=\"network-development\", container_name=~\"$service\", level=~\"$level_filter\", cluster=~\"$cluster\"} |~ `.*$search_message.*` | pattern `<message>` | line_format \"[{{.container_name}}] {{.message}}\"",
+          "legendFormat": "{{message}}",
+          "queryType": "range",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fdokero3r2i9se"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 13
+      },
+      "id": 38,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": false,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "level_filter"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "Select Severity",
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fdokero3r2i9se"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 16
+      },
+      "id": 37,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "table",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "groups": [],
+        "header": false,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": false,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "search_message"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "Search Message",
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 10,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "nats-server"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 3,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname) (container_memory_usage_bytes{cluster=\"$cluster\", hostname!=\"\"})",
+              "hide": false,
+              "legendFormat": "{{hostname}}",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname) (container_memory_working_set_bytes{cluster=\"$cluster\", hostname!=\"\"})",
+              "hide": true,
+              "legendFormat": "Working Set: {{hostname}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Memory Usage: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 20
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "label_replace(\n    sum by(hostname, instance) (container_memory_working_set_bytes{cluster=\"$cluster\", hostname=\"$service\"}),\n    \"instance\",\n    \"$1\",\n    \"instance\",\n    \"(.+):.+\"\n)",
+              "hide": true,
+              "legendFormat": "Working Set: {{instance}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "label_replace(\n    sum by(hostname, instance) (container_memory_usage_bytes{cluster=\"$cluster\", hostname=\"$service\"}),\n    \"instance\",\n    \"$1\",\n    \"instance\",\n    \"(.+):.+\"\n)",
+              "hide": false,
+              "legendFormat": "{{instance}}",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname) (container_spec_memory_limit_bytes{cluster=\"$cluster\", hostname=\"$service\"})",
+              "hide": true,
+              "legendFormat": "Limit: $service",
+              "range": true,
+              "refId": "C"
+            }
+          ],
+          "title": "Memory Usage: $service",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Total time in seconds that processes have waited for CPU time\t",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Usage: metal-ztp01-us-central-02a"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Pressure: metal-ztp01-us-central-02a"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 20
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "hardware_memory_usage_ratio{cluster=\"$cluster\", hostname=~\".*metal-ztp01-.+\"}",
+              "hide": false,
+              "legendFormat": "Memory Usage: {{hostname}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "increase(hardware_pressure_memory_seconds_total{cluster=\"$cluster\", hostname=~\".*metal-ztp01-.+\"}[1h])",
+              "hide": false,
+              "legendFormat": "Memory Pressure: {{hostname}}",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "Memory Usage: ZTP Node",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Memory: $cluster",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 9,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 21
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname) (rate(container_cpu_usage_seconds_total{cluster=\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"}[10m]) * 100)",
+              "hide": false,
+              "legendFormat": "{{hostname}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Usage: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 21
+          },
+          "id": 1,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "label_replace(\n    sum by(hostname,instance) (rate(container_cpu_usage_seconds_total{cluster=\"$cluster\", hostname=\"$service\", container_label_com_docker_compose_project=\"echo\"}[10m]) * 100),\n    \"instance\",\n    \"$1\",\n    \"instance\",\n    \"(.+):.+\"\n)",
+              "hide": false,
+              "legendFormat": "{{instance}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Usage: $service",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Total time in seconds that processes have waited for CPU time\t",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 21
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "increase(hardware_pressure_cpu_seconds_total{cluster=\"$cluster\", hostname=~\".*metal-ztp01-.+\"}[10m])",
+              "hide": false,
+              "legendFormat": "CPU Usage: {{hostname}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Pressure: ZTP Node",
+          "type": "timeseries"
+        }
+      ],
+      "title": "CPU: $cluster",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 21,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 46
+          },
+          "id": 45,
+          "options": {
+            "afterRender": "",
+            "content": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.8rem\">\n    {{#if (eq group NULL)}}\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Zone</td>\n      <td>{{name}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Geo / Super Region / Region</td>\n      <td>{{geo}} / {{super_region}} / {{region}}</td>\n    </tr>\n    {{else}}\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">{{group}}</td>\n      <td>{{name}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Geo / Super Region</td>\n      <td>{{geo}} / {{super_region}}</td>\n    </tr>\n    {{/if}}\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Locode / Facility</td>\n      <td>{{locode}} / {{facility}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Intended Status (Alert Status)</td>\n      <td style=\"color:\n        {{#if (eq intended_status '0')}}#fa96eb {{else if (eq intended_status '1')}}#4caf50 {{else if (eq\n        intended_status '2')}}#e6ed61 {{else if (eq intended_status '3')}}#edb158 {{else if (eq intended_status '4'\n        )}}#58deed {{else if (eq intended_status '5')}}#bba3f0 {{else if (eq intended_status '6')}}#bdbbbf\n        {{else}}#f44336{{/if}}\">\n        {{#if (eq intended_status '0')}}Planned\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '1')}}Active\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '2')}}Provisioned\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '3')}}Staged\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '4')}}Maintenance\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '5')}}Decommissioning\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '6')}}Inventory\n        {{#if (eq alert_status '1')}}(enabled){{else}}(disabled){{/if}}\n        {{else if (eq intended_status '7')}}Unknown (disabled)\n        {{else}}Completely Unknown ({{intended_status}})\n        {{/if}}\n      </td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Totals: circuits / devices / interfaces</td>\n      <td>{{circuit_count}} / {{device_count}} / {{interface_count}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Tags</td>\n      <td>{{variable \"site_tags\"}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">NetBox ID</td>\n      <td>\n        <a style=\"color: #6e9fff\" ; href=\"https://coreweave.cloud.netboxapp.com/dcim/sites/{{netbox_id}}/\">\n          {{netbox_id}}\n        </a>\n      </td>\n    </tr>\n  </tbody>\n</table>",
+            "contentPartials": [],
+            "defaultContent": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.8rem\">\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Site</td>\n      <td style=\"min-width: 200px;\">{{variable \"zone\"}}</td>\n    </tr>\n  </tbody>\n</table>\n\n<br>\n\n<span style=\"color: #f5aa42; font-family: 'Roboto Mono', monospace; font-size: 0.8rem\">\nNetBox information not found for current site.\n</span>",
+            "editor": {
+              "format": "auto",
+              "language": "html"
+            },
+            "editors": [
+              "styles",
+              "helpers",
+              "default"
+            ],
+            "externalStyles": [],
+            "helpers": "",
+            "renderMode": "everyRow",
+            "styles": "",
+            "wrap": true
+          },
+          "pluginVersion": "5.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "cw_sot_site_info{cluster=\"$cluster\"}",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "site_info"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "cw_sot_site_intended_status{cluster=\"$cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "intended_status"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "cw_sot_site_alert_status{cluster=\"$cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "alert_status"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(cw_sot_device_info{cluster=\"$cluster\"}) or 0",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "device_count"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(cw_sot_interface_info{cluster=\"$cluster\"}) or 0",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "interface_count"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(cw_sot_circuit_info{cluster=\"$cluster\"}) or 0",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "circuit_count"
+            }
+          ],
+          "title": "Site Details",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "Time",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Value #alert_status": "alert_status",
+                  "Value #circuit_count": "circuit_count",
+                  "Value #device_count": "device_count",
+                  "Value #intended_status": "intended_status",
+                  "Value #interface_count": "interface_count",
+                  "Value #site_info": "site_info",
+                  "region 3": "",
+                  "tags": ""
+                }
+              }
+            }
+          ],
+          "type": "marcusolsson-dynamictext-panel"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 6,
+            "y": 46
+          },
+          "id": 24,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "count(count(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project=\"echo\"}) by (name))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "ECHO Containers",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Services health and operational information. The links take you to a more detailed service dashboard, and the status codes are as follows:\n\n- **OK:** Request succeeded (even with HTTP errors).\n- **RSM:** Body mismatch with `response_string_match`.\n- **BRE:** Failed to read body, invalid UTF-8, or oversized response.\n- **CNF:** General network connection failure.\n- **TO:** Request timed out.\n- **DNS:** DNS resolution error.\n- **SCM:** Status code mismatch with expected value.\n\nPolling interval by default is 10s. [Learn more in the Telegraf HTTP Response Input Plugin](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/http_response)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": true
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Health"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "light-green",
+                            "index": 0,
+                            "text": "OK"
+                          },
+                          "1": {
+                            "color": "light-yellow",
+                            "index": 1,
+                            "text": "RSM"
+                          },
+                          "2": {
+                            "color": "light-orange",
+                            "index": 2,
+                            "text": "BRE"
+                          },
+                          "3": {
+                            "color": "light-red",
+                            "index": 3,
+                            "text": "CNF"
+                          },
+                          "4": {
+                            "color": "light-red",
+                            "index": 4,
+                            "text": "TO"
+                          },
+                          "5": {
+                            "color": "light-red",
+                            "index": 5,
+                            "text": "DNS"
+                          },
+                          "6": {
+                            "color": "light-yellow",
+                            "index": 6,
+                            "text": "SCM"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null+nan",
+                          "result": {
+                            "color": "light-purple",
+                            "index": 7,
+                            "text": "NO DATA"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "${__data.fields.server}",
+                        "url": "${__data.fields.server}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 98
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Usage"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "gradientMode": "hue",
+                      "type": "sparkline"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-GrYlRd"
+                    }
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "max",
+                    "value": 6
+                  },
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 205
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Used"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "sparkline"
+                    }
+                  },
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-RdYlGr"
+                    }
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 216
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Inbound Traffic"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "sparkline"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-GrYlRd"
+                    }
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 220
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Outbound Traffic"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "sparkline"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-BlYlRd"
+                    }
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 212
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "^([^A-Z].*|(^Time.*))"
+                },
+                "properties": [
+                  {
+                    "id": "custom.hidden",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Uptime (Hrs)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 121
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "State Timeline"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "drawStyle": "line",
+                      "fillOpacity": 27,
+                      "gradientMode": "hue",
+                      "hideValue": true,
+                      "lineInterpolation": "linear",
+                      "lineWidth": 1,
+                      "showPoints": "never",
+                      "spanNulls": false,
+                      "type": "sparkline"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 154
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Uptime"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "h"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 7,
+            "x": 9,
+            "y": 46
+          },
+          "id": 26,
+          "interval": "15m",
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "frameIndex": 0,
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Service"
+              }
+            ]
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (cluster, hostname, server) (echo_health_result_code{cluster=\"$cluster\", hostname!=\"\", external=\"false\"})",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "echo-{{hostname}}",
+              "range": false,
+              "refId": "health"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prom"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by(cluster, hostname, server) (echo_health_result_code{cluster=\"$cluster\", hostname!=\"\", external=\"false\"})",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "state"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "label_replace(\n    sum by(cluster, hostname, name) (\n        (time() - container_start_time_seconds{cluster=\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"})/3600\n    ),\n    \"hostname\",\n    \"$2\",\n    \"container_label_com_docker_compose_service\",\n    \"(^echo-?(echo-?).*)\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "Uptime (Hrs)"
+            }
+          ],
+          "title": "Service Health",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "state": {
+                  "stat": "lastNotNull"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "hostname",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Trend #(.*)",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "jsonPaths": [
+                  {
+                    "alias": "Health",
+                    "path": "value"
+                  }
+                ],
+                "source": "health"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "cluster 1": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "health": true,
+                  "name": true,
+                  "server": true,
+                  "state": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "CPU Usage": 6,
+                  "Health": 1,
+                  "Inbound Traffic": 8,
+                  "Memory Used": 7,
+                  "Outbound Traffic": 9,
+                  "Time": 10,
+                  "Value": 2,
+                  "cluster 1": 12,
+                  "cluster 2": 13,
+                  "health": 5,
+                  "hostname": 0,
+                  "name": 11,
+                  "server": 4,
+                  "state": 3
+                },
+                "renameByName": {
+                  "A": "",
+                  "Health": "",
+                  "Trend #cpu_usage": "",
+                  "Trend #health_check": "",
+                  "Trend #inbound_traffic": "",
+                  "Trend #memory_usage": "",
+                  "Trend #outbound_traffic": "",
+                  "Value": "Uptime",
+                  "health_check": "",
+                  "health_spark": "Health Timeline",
+                  "hostname": "Service",
+                  "server": "",
+                  "state": "State Timeline"
+                }
+              }
+            },
+            {
+              "id": "seriesToRows",
+              "options": {}
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Services health and operational information. The links take you to a more detailed service dashboard, and the status codes are as follows:\n\n- **OK:** Request succeeded (even with HTTP errors).\n- **RSM:** Body mismatch with `response_string_match`.\n- **BRE:** Failed to read body, invalid UTF-8, or oversized response.\n- **CNF:** General network connection failure.\n- **TO:** Request timed out.\n- **DNS:** DNS resolution error.\n- **SCM:** Status code mismatch with expected value.\n\nPolling interval by default is 10s. [Learn more in the Telegraf HTTP Response Input Plugin](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/http_response)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "links": [],
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "green",
+                      "index": 1,
+                      "text": "OK"
+                    },
+                    "1": {
+                      "color": "yellow",
+                      "index": 2,
+                      "text": "RSM"
+                    },
+                    "2": {
+                      "color": "orange",
+                      "index": 3,
+                      "text": "BRE"
+                    },
+                    "3": {
+                      "color": "red",
+                      "index": 4,
+                      "text": "CNF"
+                    },
+                    "4": {
+                      "color": "red",
+                      "index": 5,
+                      "text": "TO"
+                    },
+                    "5": {
+                      "color": "orange",
+                      "index": 6,
+                      "text": "DNS"
+                    },
+                    "6": {
+                      "color": "yellow",
+                      "index": 7,
+                      "text": "SCM"
+                    }
+                  },
+                  "type": "value"
+                },
+                {
+                  "options": {
+                    "pattern": "(.+)-network",
+                    "result": {
+                      "index": 0,
+                      "text": "$1"
+                    }
+                  },
+                  "type": "regex"
+                },
+                {
+                  "options": {
+                    "match": "null+nan",
+                    "result": {
+                      "color": "purple",
+                      "index": 8,
+                      "text": "NO DATA"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "noValue": "All is well.",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Health"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "light-green",
+                            "index": 0,
+                            "text": "OK"
+                          },
+                          "1": {
+                            "color": "light-yellow",
+                            "index": 1,
+                            "text": "RSM"
+                          },
+                          "2": {
+                            "color": "light-orange",
+                            "index": 2,
+                            "text": "BRE"
+                          },
+                          "3": {
+                            "color": "light-red",
+                            "index": 3,
+                            "text": "CNF"
+                          },
+                          "4": {
+                            "color": "light-red",
+                            "index": 4,
+                            "text": "TO"
+                          },
+                          "5": {
+                            "color": "light-red",
+                            "index": 5,
+                            "text": "DNS"
+                          },
+                          "6": {
+                            "color": "light-yellow",
+                            "index": 6,
+                            "text": "SCM"
+                          },
+                          "9": {
+                            "index": 8,
+                            "text": "999"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null+nan",
+                          "result": {
+                            "color": "light-purple",
+                            "index": 7,
+                            "text": "NO DATA"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 78
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Site"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "hostname"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 232
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 207
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Logging",
+                        "url": "/d/ee2kn1qtyfldse/services-log-explorer?orgId=1&var-cluster=${__data.fields.Site}-network&var-container_name=${__data.fields.Service}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 16,
+            "y": 46
+          },
+          "id": 22,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "fdokero3r2i9se"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "echo_server_service_running_container_sum{cluster=\"$cluster\", health=\"healthy\"} == 0",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Unhealthy ECHO Services",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "cluster": true,
+                  "cluster_org": true,
+                  "collector": true,
+                  "exported_cluster": true,
+                  "exported_cluster_org": true,
+                  "exported_geo": true,
+                  "exported_locode": true,
+                  "exported_region": true,
+                  "exported_super_region": true,
+                  "exported_zone": true,
+                  "external": true,
+                  "geo": true,
+                  "health": true,
+                  "host": true,
+                  "hostname": false,
+                  "instance": true,
+                  "job": true,
+                  "job_origin": true,
+                  "kind": true,
+                  "locode": true,
+                  "method": true,
+                  "pipeline": true,
+                  "region": true,
+                  "server": true,
+                  "super_region": true,
+                  "virtualization_type": true,
+                  "visibility": true,
+                  "zone": true
+                },
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Value": "Health",
+                  "cluster": "Site",
+                  "hostname": "Service",
+                  "name": "Service"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Services that have restarted 3 or more times over the last hour",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "links": [],
+              "mappings": [
+                {
+                  "options": {
+                    "pattern": "(.+)-network",
+                    "result": {
+                      "index": 0,
+                      "text": "$1"
+                    }
+                  },
+                  "type": "regex"
+                }
+              ],
+              "noValue": "All is well.",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Site"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 163
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 282
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Restarts"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 72
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Logging",
+                        "url": "/d/ee2kn1qtyfldse/services-log-explorer?orgId=1&var-cluster=${__data.fields.Site}-network&var-container_name=${__data.fields.Service}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 20,
+            "y": 46
+          },
+          "id": 23,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Site"
+              }
+            ]
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "fdokero3r2i9se"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sort_desc(count by(cluster, name) (count_over_time(container_last_seen{cluster=\"$cluster\", name=~\".+\", container_label_com_docker_compose_project=\"echo\"}[1h]))) >= 4",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Restarting Services",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "cluster": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 3,
+                  "cluster": 1,
+                  "name": 2
+                },
+                "renameByName": {
+                  "Value": "Restarts",
+                  "cluster": "Site",
+                  "name": "Service"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 6,
+            "y": 50
+          },
+          "id": 25,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "count(count(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project!=\"echo\"}) by (name))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Non-ECHO Containers",
+          "type": "stat"
+        }
+      ],
+      "title": "ECHO Stack Health Summary: $cluster",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 27,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "fdokero3r2i9se"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "color",
+                  "thresholds": []
+                }
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 79
+          },
+          "id": 32,
+          "options": {
+            "alwaysVisibleFilter": false,
+            "autoScroll": false,
+            "collapsedByDefault": false,
+            "customValue": false,
+            "displayMode": "minimize",
+            "emptyValue": false,
+            "favorites": {
+              "enabled": false,
+              "storage": "browser"
+            },
+            "filter": false,
+            "groupSelection": false,
+            "header": true,
+            "isUseLocalTime": false,
+            "minimizeOutputFormat": "text",
+            "padding": 10,
+            "persistent": false,
+            "saveSelectedGroup": false,
+            "saveSelectedGroupKey": "",
+            "showGroupTotal": false,
+            "showLabel": false,
+            "showName": false,
+            "showResetButton": false,
+            "showTotal": false,
+            "statusSort": false,
+            "sticky": false,
+            "tabsInOrder": true,
+            "variable": "service_filter"
+          },
+          "pluginVersion": "3.6.0",
+          "targets": [
+            {
+              "refId": "A"
+            }
+          ],
+          "title": "Filter by Service",
+          "transparent": true,
+          "type": "volkovlabs-variable-panel"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Usage > 30 GiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "pattern": "(.+)-network",
+                    "result": {
+                      "index": 0,
+                      "text": "$1"
+                    }
+                  },
+                  "type": "regex"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 82
+          },
+          "id": 28,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        container_memory_usage_bytes{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"} /1024 /1024,\n        \"cluster\", \"$1\", \"cluster\", \"^(.*)-network$\"\n    )\n) > 30000",
+              "hide": false,
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "label_replace(\n    container_memory_working_set_bytes{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"} /1024 /1024,\n    \"cluster\", \"$1\", \"cluster\", \"^(.*)-network$\"\n) > 30000",
+              "hide": true,
+              "legendFormat": "Working Set: {{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Memory Usage: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Usage > 100%",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 82
+          },
+          "id": 29,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        rate(container_cpu_usage_seconds_total{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"}[10m]) * 100,\n        \"cluster\", \"$1\", \"cluster\", \"(.*)-network$\"\n    )\n) > 100",
+              "hide": false,
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Usage: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Reads > 30 KiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 89
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        rate(container_fs_reads_bytes_total{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"}[10m]),\n        \"cluster\", \"$1\", \"cluster\", \"(.*)-network$\"\n    )\n) > 30000",
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Reads: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Writes > 30 KiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 89
+          },
+          "id": 33,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        rate(container_fs_writes_bytes_total{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"}[10m]),\n        \"cluster\", \"$1\", \"cluster\", \"(.*)-network$\"\n    )\n) > 30000000",
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Writes: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Received > 30 MiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 89
+          },
+          "id": 31,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        rate(container_network_receive_bytes_total{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"}[10m]),\n        \"cluster\", \"$1\", \"cluster\", \"(.*)-network$\"\n    )\n) > 30000000",
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Received Network Traffic: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "description": "Sent > 30 MiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 89
+          },
+          "id": 34,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(hostname, cluster) (\n    label_replace(\n        rate(container_network_transmit_bytes_total{cluster=~\".+-network\", hostname!=\"\", hostname=~\"$service_filter\", container_label_com_docker_compose_project=\"echo\"}[10m]),\n        \"cluster\", \"$1\", \"cluster\", \"(.*)-network$\"\n    )\n) > 30000000",
+              "legendFormat": "{{hostname}} ({{cluster}})",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Sent Network Traffic: All Services",
+          "type": "timeseries"
+        }
+      ],
+      "title": "ECHO Service Outliers: All Sites",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 11,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 99
+          },
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_fs_reads_bytes_total{cluster=~\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Reads: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 99
+          },
+          "id": 14,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_fs_reads_bytes_total{cluster=~\"$cluster\", hostname=\"$service\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Reads: $service",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 12,
+            "y": 99
+          },
+          "id": 13,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_fs_writes_bytes_total{cluster=~\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Writes: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 18,
+            "y": 99
+          },
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_fs_writes_bytes_total{cluster=~\"$cluster\", hostname=\"$service\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Writes: $service",
+          "type": "timeseries"
+        }
+      ],
+      "title": "I/O: $cluster",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 8,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 108
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_network_receive_bytes_total{cluster=~\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Received Network Traffic: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 108
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_network_receive_bytes_total{cluster=~\"$cluster\", hostname=\"$service\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Received Network Traffic: $service",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 12,
+            "y": 108
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_network_transmit_bytes_total{cluster=~\"$cluster\", hostname!=\"\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Sent Network Traffic: All Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${metrics_datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 18,
+            "y": 108
+          },
+          "id": 19,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${metrics_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum by (hostname) (rate(container_network_transmit_bytes_total{cluster=~\"$cluster\", hostname=\"$service\", container_label_com_docker_compose_project=\"echo\"}[10m]) > 0)",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Sent Network Traffic: $service",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Network: $cluster",
+      "type": "row"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [
+    "owner:srp",
+    "status:production",
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "VictoriaMetrics US-WEST (Prometheus)",
+          "value": "P546B13C064491369"
+        },
+        "label": "Metrics Datasource",
+        "name": "metrics_datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "(GloQL.*|VictoriaMetrics .+ \\(Prometheus\\)|Prometheus-Echo-DT)",
+        "type": "datasource"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "Loki (US-WEST)",
+          "value": "af20t1e3rwcu8c"
+        },
+        "label": "Logs Datasource",
+        "name": "logs_datasource",
+        "options": [],
+        "query": "loki",
+        "refresh": 1,
+        "regex": "Loki(?:\\s\\(.+\\))?|-global-query",
+        "type": "datasource"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "US-CENTRAL-03A",
+          "value": "US-CENTRAL-03A-network"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${metrics_datasource}"
+        },
+        "definition": "query_result(cw_sot_site_info)",
+        "label": "Site",
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(cw_sot_site_info)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/id=\"(?<text>[^\"]+)|cluster=\"(?<value>[^\"]+)/g",
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "consul",
+          "value": "consul"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${metrics_datasource}"
+        },
+        "definition": "label_values(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project=\"echo\"},container_label_com_docker_compose_service)",
+        "label": "Service",
+        "name": "service",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project=\"echo\"},container_label_com_docker_compose_service)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "allValue": ".+",
+        "allowCustomValue": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${metrics_datasource}"
+        },
+        "definition": "label_values(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project=\"echo\"},container_label_com_docker_compose_service)",
+        "hide": 2,
+        "includeAll": true,
+        "name": "service_filter",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(container_last_seen{cluster=\"$cluster\", container_label_com_docker_compose_project=\"echo\"},container_label_com_docker_compose_service)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "search for message using regex",
+        "hide": 2,
+        "name": "search_message",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "allValue": ".+",
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "${log_datasource}"
+        },
+        "definition": "",
+        "description": "",
+        "hide": 2,
+        "includeAll": true,
+        "name": "level_filter",
+        "options": [],
+        "query": {
+          "label": "level",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "{org_id=\"network-services\", team=\"network-development\", container_name=~\"$service\"}",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "no11y:blueprint:echo-stack-phoenix-v1,no11y:echo:enable,no11y:size:medium",
+          "value": "no11y:blueprint:echo-stack-phoenix-v1,no11y:echo:enable,no11y:size:medium"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${metrics_datasource}"
+        },
+        "definition": "label_values(cw_sot_site_info{cluster=\"$cluster\"},tags)",
+        "hide": 2,
+        "name": "site_tags",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(cw_sot_site_info{cluster=\"$cluster\"},tags)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "^(.+),",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "o11y-service-health",
+  "uid": "ffdfkj4weivwge",
+  "version": 1,
+  "weekStart": ""
+}
