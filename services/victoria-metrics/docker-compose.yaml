@@ -31,4 +31,3 @@ services:
 
 volumes:
   victoria_metrics_data:
-

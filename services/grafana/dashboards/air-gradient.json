@@ -31,6 +31,100 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 14,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.14",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "airgradient_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "airgradient_library_version": true,
+              "airgradient_serial_number": true,
+              "instance": true,
+              "job": true,
+              "job_origin": true,
+              "test": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "airgradient_device_type": "Device Type",
+              "airgradient_library_version": "Firmware",
+              "airgradient_serial_number": "Serial Number",
+              "instance": "Instance"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "victoria-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -50,9 +144,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 4,
-        "x": 0,
+        "x": 4,
         "y": 0
       },
       "id": 12,
@@ -152,9 +246,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 4,
+        "x": 8,
         "y": 0
       },
       "id": 2,
@@ -177,7 +271,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "avg_over_time(airgradient_temperature_celsius{instance=\"$instance\"}[$__interval])",
+          "expr": "sum by(instance)(avg_over_time(airgradient_temperature_celsius{instance=\"$instance\"}[$__interval]))",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -260,9 +354,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
+        "h": 6,
+        "w": 8,
+        "x": 16,
         "y": 0
       },
       "id": 3,
@@ -285,7 +379,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_tvoc_index{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_tvoc_index{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -294,6 +388,196 @@
       ],
       "title": "TVOC Index",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "victoria-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 3
+      },
+      "id": 15,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.14",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "airgradient_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "airgradient_device_type": true,
+              "airgradient_library_version": false,
+              "airgradient_serial_number": true,
+              "instance": true,
+              "job": true,
+              "job_origin": true,
+              "test": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "airgradient_device_type": "Device Type",
+              "airgradient_library_version": "Firmware",
+              "airgradient_serial_number": "Serial Number",
+              "instance": "Instance"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "victoria-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 6
+      },
+      "id": 16,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.14",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "airgradient_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "airgradient_device_type": true,
+              "airgradient_library_version": true,
+              "airgradient_serial_number": true,
+              "instance": false,
+              "job": true,
+              "job_origin": true,
+              "test": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "airgradient_device_type": "Device Type",
+              "airgradient_library_version": "Firmware",
+              "airgradient_serial_number": "Serial Number",
+              "instance": "Instance"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": {
@@ -323,10 +607,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 4,
-        "x": 0,
-        "y": 7
+        "x": 4,
+        "y": 6
       },
       "id": 5,
       "options": {
@@ -422,10 +706,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 4,
-        "y": 7
+        "x": 8,
+        "y": 6
       },
       "id": 13,
       "options": {
@@ -447,7 +731,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "avg_over_time(airgradient_humidity_percent{instance=\"$instance\"}[$__interval])",
+          "expr": "sum by(instance)(avg_over_time(airgradient_humidity_percent{instance=\"$instance\"}[$__interval]))",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -531,10 +815,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 7
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 6
       },
       "id": 1,
       "options": {
@@ -556,7 +840,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_co2_ppm{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_co2_ppm{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -565,6 +849,101 @@
       ],
       "title": "CO2 PPM",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "victoria-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 9
+      },
+      "id": 17,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.14",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "airgradient_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "airgradient_device_type": true,
+              "airgradient_library_version": true,
+              "airgradient_serial_number": false,
+              "instance": true,
+              "job": true,
+              "job_origin": true,
+              "test": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "airgradient_device_type": "Device Type",
+              "airgradient_library_version": "Firmware",
+              "airgradient_serial_number": "Serial Number",
+              "instance": "Instance"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": {
@@ -637,7 +1016,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "id": 4,
       "options": {
@@ -659,7 +1038,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_nox_index{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_nox_index{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -675,7 +1054,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 19
       },
       "id": 7,
       "panels": [],
@@ -746,7 +1125,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 8,
       "options": {
@@ -768,7 +1147,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm1_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm1_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -842,7 +1221,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 20
       },
       "id": 10,
       "options": {
@@ -864,7 +1243,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm2d5_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm2d5_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -938,7 +1317,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 9,
       "options": {
@@ -960,7 +1339,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm10_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm10_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -1033,7 +1412,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 28
       },
       "id": 11,
       "options": {
@@ -1055,7 +1434,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm0d3_p100ml{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm0d3_p100ml{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,

@@ -24,7 +24,7 @@ services:
         target: /etc/grafana/custom.ini
         read_only: true
       - type: bind
-        source: ./shabbynet.png
+        source: ./shabbynet.svg
         target: /usr/share/grafana/public/img/grafana_icon.svg
         read_only: true
       - grafana-data:/var/lib/grafana

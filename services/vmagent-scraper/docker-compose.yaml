@@ -1,3 +1,4 @@
+
 services:
   vmagent-scraper:
     image: victoriametrics/vmagent:v1.135.0
@@ -25,7 +26,6 @@ services:
       - "--httpListenAddr=:8629"
       - "--promscrape.config=/etc/prometheus/prometheus.yaml"
       - "--promscrape.config.strictParse=false"
-      # remote writes
       - "--remoteWrite.url=http://victoria-metrics:8428/api/v1/write"
       - "--remoteWrite.label=job_origin=vmagent-scraper"
     networks:
