@@ -40,6 +40,9 @@ transforms:
               .level = m.level
             }
           }
+          if .message == "" {
+            abort
+          }
         } else if starts_with(.container_name, "vector") || .container_name == "victoria-metrics" {
           m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+(?P<level>\w+)\s')
           if err == null {
