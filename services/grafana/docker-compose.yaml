@@ -39,12 +39,13 @@ services:
       GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor
       # Plugin installs
       GF_INSTALL_PLUGINS: >
-        grafana-polystat-panel
+        grafana-polystat-panel,
+        marcusolsson-dynamictext-panel,
+        volkovlabs-variable-panel
+      #  marcusolsson-treemap-panel
       # yesoreyeram-infinity-datasource,
       # volkovlabs-echarts-panel,
       # marcusolsson-dynamictext-panel,
-      # volkovlabs-variable-panel,
-      # marcusolsson-treemap-panel,
       # andrewbmchugh-flow-panel,
       # grafana-clickhouse-datasource,
       # esnet-matrix-panel,

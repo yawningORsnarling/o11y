@@ -2729,8 +2729,8 @@
   ],
   "schemaVersion": 39,
   "tags": [
-    "status:production",
-    "owner:o11y"
+    "owner:srp",
+    "status:production"
   ],
   "templating": {
     "list": [
@@ -2761,7 +2761,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "o11y-home",
+  "title": "o11y",
   "uid": "bfdfke4w5fy80f",
   "version": 2,
   "weekStart": ""

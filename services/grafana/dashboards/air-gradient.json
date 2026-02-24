@@ -1446,7 +1446,10 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "owner:srp",
+    "status:production"
+  ],
   "templating": {
     "list": [
       {
