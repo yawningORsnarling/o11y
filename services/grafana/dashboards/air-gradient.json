@@ -18,9 +18,125 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 1,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "victoria-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "afterRender": "",
+        "content": "<table>\n  <tbody style=\"font-family: 'Roboto Mono', monospace; font-size: 0.75rem\">\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Device Type</td>\n      <td>{{device_type}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Firmware</td>\n      <td>{{firmware}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Serial Number</td>\n      <td>{{serial_number}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Instance</td>\n      <td>{{instance}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Stack</td>\n      <td>{{stack}}</td>\n    </tr>\n    <tr>\n      <td style=\"background-color: #2f3030; color: #B0BEC5\">Health</td>\n      <td style=\"color: {{#if (eq health_check 1)}}#4CAF50{{else}}#F44336{{/if}}\">\n        {{#if (eq health_check 1)}}Healthy{{else}}Unhealthy{{/if}}\n      </td>\n    </tr>\n  </tbody>\n</table>",
+        "contentPartials": [],
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "handlebars"
+        },
+        "editors": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "6.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "airgradient_info",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "instance"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoria-metrics"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(instance)(up{job=\"air-gradient\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "health_check"
+        }
+      ],
+      "title": "Panel Title",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "instance",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time 1": true,
+              "Time 2": true,
+              "Value #A": true,
+              "__name__": true,
+              "instance": false,
+              "job": true,
+              "job_origin": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #health_check": "health_check",
+              "airgradient_device_type": "device_type",
+              "airgradient_library_version": "firmware",
+              "airgradient_serial_number": "serial_number",
+              "instance": "instance",
+              "job": "",
+              "stack": "stack"
+            }
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -50,9 +166,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 4,
-        "x": 0,
+        "x": 4,
         "y": 0
       },
       "id": 12,
@@ -152,9 +268,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 4,
+        "x": 8,
         "y": 0
       },
       "id": 2,
@@ -177,7 +293,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "avg_over_time(airgradient_temperature_celsius{instance=\"$instance\"}[$__interval])",
+          "expr": "sum by(instance)(avg_over_time(airgradient_temperature_celsius{instance=\"$instance\"}[$__interval]))",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -260,9 +376,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
+        "h": 6,
+        "w": 8,
+        "x": 16,
         "y": 0
       },
       "id": 3,
@@ -285,7 +401,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_tvoc_index{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_tvoc_index{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -323,10 +439,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 4,
-        "x": 0,
-        "y": 7
+        "x": 4,
+        "y": 6
       },
       "id": 5,
       "options": {
@@ -422,10 +538,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 4,
-        "y": 7
+        "x": 8,
+        "y": 6
       },
       "id": 13,
       "options": {
@@ -447,7 +563,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "avg_over_time(airgradient_humidity_percent{instance=\"$instance\"}[$__interval])",
+          "expr": "sum by(instance)(avg_over_time(airgradient_humidity_percent{instance=\"$instance\"}[$__interval]))",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -531,10 +647,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 7
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 6
       },
       "id": 1,
       "options": {
@@ -556,7 +672,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_co2_ppm{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_co2_ppm{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -637,7 +753,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "id": 4,
       "options": {
@@ -659,7 +775,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_nox_index{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_nox_index{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -675,7 +791,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 19
       },
       "id": 7,
       "panels": [],
@@ -746,7 +862,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 8,
       "options": {
@@ -768,7 +884,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm1_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm1_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -842,7 +958,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 20
       },
       "id": 10,
       "options": {
@@ -864,7 +980,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm2d5_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm2d5_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -921,8 +1037,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -938,7 +1053,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 9,
       "options": {
@@ -960,7 +1075,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm10_ugm3{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm10_ugm3{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -1017,8 +1132,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1033,7 +1147,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 28
       },
       "id": 11,
       "options": {
@@ -1055,7 +1169,7 @@
             "uid": "victoria-metrics"
           },
           "editorMode": "code",
-          "expr": "airgradient_pm0d3_p100ml{instance=\"$instance\"}",
+          "expr": "sum by(instance)(airgradient_pm0d3_p100ml{instance=\"$instance\"})",
           "instant": false,
           "legendFormat": "{{sensor_location}}",
           "range": true,
@@ -1067,7 +1181,10 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "owner:srp",
+    "status:production"
+  ],
   "templating": {
     "list": [
       {
@@ -1108,6 +1225,6 @@
   "timezone": "browser",
   "title": "AirGradient Insights",
   "uid": "efdgox020efwga",
-  "version": 11,
+  "version": 2,
   "weekStart": ""
 }

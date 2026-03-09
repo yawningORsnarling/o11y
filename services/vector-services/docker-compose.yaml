@@ -1,0 +1,29 @@
+services:
+  vector-services:
+    image: timberio/vector:0.43.1-alpine
+    container_name: vector-services
+    restart: unless-stopped
+    command:
+      - "-c"
+      - "/etc/vector/vector.yaml"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:8686/health || exit 1",
+        ]
+    environment:
+      VECTOR_LOG: info
+    volumes:
+      - type: bind
+        source: ./vector-services.yaml
+        target: /etc/vector/vector.yaml
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"

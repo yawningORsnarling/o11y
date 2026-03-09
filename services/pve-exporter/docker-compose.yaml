@@ -25,4 +25,3 @@ services:
       - o11y-home
     labels:
       - "stack=o11y-home"
-

@@ -1,0 +1,197 @@
+
+api:
+  enabled: true
+  address: "0.0.0.0:8686"
+
+sources:
+  o11y-internal-metrics:
+    type: internal_metrics
+  o11y-services-raw:
+    type: docker_logs
+
+transforms:
+  o11y-transform:
+    type: remap
+    inputs:
+      - o11y-services-raw
+    source: |
+      .tags = ["services"]
+      .__parse_error = 0
+      msg = encode_json(.)
+      m, err = parse_json(msg, max_depth: 2)
+      if err == null {
+        .message = m.message
+        .container_name, _ = to_string(.container_name)
+        if .container_name == "loki" {
+          m, err = parse_key_value(.message)
+          if err == null && exists(m.level) {
+            .level = m.level
+          }
+        } else if .container_name == "grafana" {
+          m, err = parse_key_value(.message)
+          if err == null && exists(m.level) {
+            m, err = parse_key_value(.message)
+            if err == null && exists(m.level) {
+              .level = m.level
+            }
+          } else {
+            m, err = parse_regex(.message, r'^(?P<level>\w+):')
+            if err == null {
+              .level = m.level
+            }
+          }
+          if .message == "" {
+            abort
+          }
+        } else if starts_with(.container_name, "vector") || .container_name == "victoria-metrics" {
+          m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+(?P<level>\w+)\s')
+          if err == null {
+            .level = m.level
+          }
+        } else if .container_name == "vmagent-scraper" {
+          m, err = parse_regex(.message, r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\t+(?P<level>\w+)\t+')
+          if err == null {
+            .level = m.level
+          }
+        } else if .container_name == "cadvisor" {
+          m, err = parse_regex(.message, r'^(?P<level>[A-Z])\d')
+          if err == null {
+            .level = m.level
+          }
+        }
+
+        # ----------------------------------------
+        # Convert log levels
+        # ----------------------------------------
+
+        levels = {
+          "0": "emergency",
+          "1": "emergency",
+          "emerg": "emergency",
+          "emg": "emergency",
+          "emergency": "emergency",
+          "p": "emergency",
+          "alt": "emergency",
+          "alert": "emergency",
+          "alerting": "emergency",
+          "fatal": "emergency",
+          "f": "emergency",
+          "2": "critical",
+          "crt": "critical",
+          "crit": "critical",
+          "critical": "critical",
+          "3": "error",
+          "err": "error",
+          "error": "error",
+          "e!": "error",
+          "e": "error",
+          "4": "warning",
+          "wrn": "warning",
+          "warn": "warning",
+          "warning": "warning",
+          "w!": "warning",
+          "#": "warning",
+          "w": "warning",
+          "5": "notice",
+          "not": "notice",
+          "notice": "notice",
+          "*": "notice",
+          "6": "info",
+          "i!": "info",
+          "inf": "info",
+          "info": "info",
+          "inform": "info",
+          "information": "info",
+          "informational": "info",
+          "-": "info",
+          "i": "info",
+          "inf": "info",
+          "7": "debug",
+          "debug": "debug",
+          "debugging": "debug",
+          "d!": "debug",
+          ".": "debug",
+          "d": "debug",
+          "dbg": "debug",
+          "trace": "trace",
+          "t": "trace",
+          "trc": "trace"
+        }
+
+        # Attempt to replace level with mapping above
+        level_lower, _ = downcase(.level)
+        if level_lower != null {
+          level, _ = get(levels, [level_lower])
+          if level != null {
+            .level = level
+          } else {
+            .level = "unknown"
+          }
+        }
+
+      } else {
+        .__parse_error = 1
+      }
+
+      # ----------------------------------------
+      # Assign labels and structured metadata
+      # ----------------------------------------
+
+      .labels = {}
+      .labels.stack = "o11y-home"
+      .labels.level = .level
+      .labels.container_name = .container_name
+      .labels.job = "vector-services"
+      .structured_metadata = {}
+      .structured_metadata.__parse_error = .__parse_error
+      .structured_metadata.source_type = .source_type
+      .structured_metadata.tags = .tags
+
+      del(.host)
+      del(.level)
+      del(.stream)
+      del(.container_name)
+      del(.source_type)
+      del(.__parse_error)
+
+
+  o11y-internal-metrics-transform:
+    type: remap
+    inputs:
+      - o11y-internal-metrics
+    source: |
+      .tags.stack = "o11y-home"
+      .tags.job = "vector-services"
+      .tags.container_name = .container_name
+      del(.tags.host)
+
+sinks:
+  o11y-services-loki-local:
+    type: loki
+    inputs:
+      #- o11y-services-raw
+      - o11y-transform
+    endpoint: "http://loki:3001"
+    compression: snappy
+    encoding:
+      codec: "json"
+    remove_label_fields: true
+    remove_structured_metadata_fields: true
+
+    labels:
+      "*": "{{ labels }}"
+    structured_metadata:
+      "*": "{{ structured_metadata }}"
+
+  o11y-victoria-metrics-remote-write:
+    type: prometheus_remote_write
+    inputs:
+      - o11y-internal-metrics-transform
+    endpoint: "http://victoria-metrics:8428/api/v1/write"
+
+  console_out:
+    type: console
+    inputs:
+      - o11y-services-raw
+    encoding:
+      codec: json

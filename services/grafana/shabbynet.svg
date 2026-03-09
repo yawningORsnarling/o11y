@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="128" height="128"
+     viewBox="0 0 128 128">
+
+  <defs>
+    <linearGradient id="shabbyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b8f34e"/>
+      <stop offset="100%" stop-color="#5fd0c4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="64" cy="64" r="58"
+          stroke="url(#shabbyGradient)"
+          stroke-width="8"
+          fill="none"/>
+
+  <!-- Chart line -->
+  <polyline
+      points="28,80 46,70 58,74 74,60 90,66 104,52"
+      fill="none"
+      stroke="url(#shabbyGradient)"
+      stroke-width="8"
+      stroke-linecap="round"
+      stroke-linejoin="round"/>
+
+  <!-- Data nodes -->
+  <g fill="url(#shabbyGradient)">
+    <circle cx="28" cy="80" r="5"/>
+    <circle cx="46" cy="70" r="5"/>
+    <circle cx="58" cy="74" r="5"/>
+    <circle cx="74" cy="60" r="5"/>
+    <circle cx="90" cy="66" r="5"/>
+    <circle cx="104" cy="52" r="5"/>
+  </g>
+
+</svg>

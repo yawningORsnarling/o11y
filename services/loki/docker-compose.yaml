@@ -1,0 +1,33 @@
+
+services:
+  loki:
+    image: docker.io/grafana/loki:3.2.1
+    container_name: loki
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://127.0.0.1:3001/ready || exit 1",
+        ]
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./loki-config.yaml
+        target: /etc/loki/loki-config.yaml
+        read_only: true
+      - type: bind
+        source: ./rules/
+        target: /rules/fake/
+        read_only: true
+      - loki_data:/loki:rw
+    command:
+      - "-config.file=/etc/loki/loki-config.yaml"
+    ports:
+      - "3001:3001"
+    networks:
+      - o11y-home
+    labels:
+      - "stack=o11y-home"
+
+volumes:
+  loki_data:

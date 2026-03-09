@@ -8,8 +8,8 @@
     - targets:
         - "victoria-metrics:8428"
   relabel_configs:
-    - target_label: test
-      replacement: srp
+    - target_label: stack
+      replacement: o11y-home
 
 - job_name: grafana
   scrape_interval: 1m
@@ -20,8 +20,20 @@
     - targets:
         - "grafana:3000"
   relabel_configs:
-    - target_label: test
-      replacement: srp 
+    - target_label: stack
+      replacement: o11y-home
+
+- job_name: loki
+  scrape_interval: 1m
+  scrape_timeout: 20s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+    - targets:
+        - "loki:3001"
+  relabel_configs:
+    - target_label: stack
+      replacement: o11y-home
 
 - job_name: pve-exporter
   scrape_interval: 1m
@@ -32,8 +44,8 @@
     - targets:
         - "pve-exporter:9221"
   relabel_configs:
-    - target_label: test
-      replacement: srp 
+    - target_label: stack
+      replacement: o11y-home
 
 - job_name: pve
   scrape_interval: 1m
@@ -45,6 +57,8 @@
   params:
     module: [default]
   relabel_configs:
+    - target_label: stack
+      replacement: o11y-home
     - source_labels: [__address__]
       target_label: __param_target
     - source_labels: [__param_target]
@@ -61,6 +75,17 @@
     - targets:
         - "172.16.100.146:80"
   relabel_configs:
-    - target_label: test
-      replacement: srp 
+    - target_label: stack
+      replacement: o11y-home
 
+- job_name: cadvisor
+  scrape_interval: 1m
+  scrape_timeout: 20s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+    - targets:
+        - "cadvisor:8080"
+  relabel_configs:
+    - target_label: stack
+      replacement: o11y-home
